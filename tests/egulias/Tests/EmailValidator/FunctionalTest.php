@@ -26,7 +26,10 @@ class FunctionalTest extends \PHPUnit_Framework_TestCase
      */
     public function testWithoutDns($address, $isValid)
     {
-        $result = $this->validator->isValid($address, false, true);
+        // Using strict mode without DNS checks causes addresses the parser erroneously considers
+        // acceptable to be considered invalid, so instead of performing strict check perform
+        // regular check and ensure there are no warnings.
+        $result = $this->validator->isValid($address, false, false) && !$this->validator->hasWarnings();
         $displayEmail = strtr($address, self::$friendlyDisplayReplacements);
 
         if ($isValid) {
