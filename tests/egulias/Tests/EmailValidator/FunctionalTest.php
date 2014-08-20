@@ -29,13 +29,15 @@ class FunctionalTest extends \PHPUnit_Framework_TestCase
         // Using strict mode without DNS checks causes addresses the parser erroneously considers
         // acceptable to be considered invalid, so instead of performing strict check perform
         // regular check and ensure there are no warnings.
-        $result = $this->validator->isValid($address, false, false) && !$this->validator->hasWarnings();
+        $result = $this->validator->isValid($address, false, false);
+        $hasWarnings =  $this->validator->hasWarnings();
         $displayEmail = strtr($address, self::$friendlyDisplayReplacements);
 
         if ($isValid) {
             $this->assertTrue($result, sprintf('`%s` should be valid', $displayEmail));
+            $this->assertFalse($hasWarnings, sprintf('`%s` should NOT have warnings', $displayEmail));
         } else {
-            $this->assertFalse($result, sprintf('`%s` should NOT be valid', $displayEmail));
+            $this->assertFalse($result && !$hasWarnings, sprintf('`%s` should NOT be valid', $displayEmail));
         }
     }
 
